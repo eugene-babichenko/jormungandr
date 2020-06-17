@@ -91,6 +91,7 @@ impl LegacyNodeConfigConverter {
                 listen: source.rest.listen,
                 cors: None,
                 tls: None,
+                notifier: None,
             },
             p2p: P2p {
                 trusted_peers,
@@ -146,6 +147,7 @@ impl LegacyNodeConfigConverter {
                 listen: source.rest.listen,
                 cors: None,
                 tls: None,
+                notifier: None,
             },
             p2p: P2p {
                 trusted_peers,
