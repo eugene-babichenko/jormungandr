@@ -1,6 +1,7 @@
 mod benchmark;
 mod configuration_builder;
 pub mod logger;
+pub mod notifier;
 pub mod process;
 pub mod rest;
 pub mod starter;
