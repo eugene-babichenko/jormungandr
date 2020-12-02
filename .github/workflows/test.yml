@@ -7,7 +7,6 @@ on:
   pull_request:
 
 jobs:
-
   cache_info:
     name: Bootstrap cache
     runs-on: ubuntu-latest
@@ -154,6 +153,8 @@ jobs:
     name: Lints
     needs: [cache_info, update_deps]
     runs-on: ubuntu-latest
+    env:
+      CARGO_TARGET_DIR: /dev/shm
     steps:
       - uses: actions-rs/toolchain@v1
         with:
@@ -190,4 +191,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings
+          args: --target-dir /dev/shm --locked -- -D warnings
