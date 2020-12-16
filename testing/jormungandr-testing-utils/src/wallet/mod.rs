@@ -222,6 +222,7 @@ impl Wallet {
     }
 
     pub fn confirm_transaction(&mut self) {
+        eprintln!("confirming transaction");
         match self {
             Wallet::Account(account) => account.increment_counter(),
             _ => unimplemented!(),
