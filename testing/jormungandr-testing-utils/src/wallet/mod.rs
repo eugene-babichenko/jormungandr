@@ -7,7 +7,7 @@ use crate::{
     testing::{FragmentBuilder, FragmentBuilderError},
 };
 use chain_impl_mockchain::{
-    certificate::VotePlan,
+    certificate::{VotePlan, VoteTallyPayload},
     fee::FeeAlgorithm,
     key::EitherEd25519SecretKey,
     testing::data::{AddressData, AddressDataValue, Wallet as WalletLib},
@@ -222,6 +222,7 @@ impl Wallet {
     }
 
     pub fn confirm_transaction(&mut self) {
+        eprintln!("confirming transaction");
         match self {
             Wallet::Account(account) => account.increment_counter(),
             _ => unimplemented!(),
@@ -360,8 +361,9 @@ impl Wallet {
         block0_hash: &Hash,
         fees: &LinearFee,
         vote_plan: &VotePlan,
+        tally_type: VoteTallyPayload,
     ) -> Result<Fragment, WalletError> {
-        Ok(FragmentBuilder::new(block0_hash, fees).vote_tally(&self, vote_plan))
+        Ok(FragmentBuilder::new(block0_hash, fees).vote_tally(&self, vote_plan, tally_type))
     }
 
     pub fn to_committee_id(&self) -> CommitteeIdDef {

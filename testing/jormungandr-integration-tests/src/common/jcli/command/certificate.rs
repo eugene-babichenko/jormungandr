@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+use chain_impl_mockchain::vote::PayloadType;
 use jormungandr_lib::interfaces::TaxType;
 use std::path::Path;
 use std::process::Command;
@@ -46,10 +47,27 @@ impl CertificateCommand {
         self
     }
 
-    pub fn vote_tally<S: Into<String>>(mut self, vote_plan_id: S) -> Self {
+    pub fn public_vote_tally<S: Into<String>>(mut self, vote_plan_id: S) -> Self {
         self.command
             .arg("new")
             .arg("vote-tally")
+            .arg("public")
+            .arg("--vote-plan-id")
+            .arg(vote_plan_id.into());
+        self
+    }
+
+    pub fn private_vote_tally<S: Into<String>, P: AsRef<Path>>(
+        mut self,
+        vote_plan_id: S,
+        shares: P,
+    ) -> Self {
+        self.command
+            .arg("new")
+            .arg("vote-tally")
+            .arg("private")
+            .arg("--share")
+            .arg(shares.as_ref())
             .arg("--vote-plan-id")
             .arg(vote_plan_id.into());
         self
@@ -71,6 +89,31 @@ impl CertificateCommand {
             .arg(proposal_idx.to_string())
             .arg("--choice")
             .arg(choice.to_string());
+        self
+    }
+
+    pub fn private_vote_cast<P: AsRef<Path>>(
+        mut self,
+        choice: u8,
+        options_size: usize,
+        proposal_idx: usize,
+        vote_plan_id: String,
+        encrypting_key_path: P,
+    ) -> Self {
+        self.command
+            .arg("new")
+            .arg("vote-cast")
+            .arg("private")
+            .arg("--vote-plan-id")
+            .arg(vote_plan_id)
+            .arg("--proposal-index")
+            .arg(proposal_idx.to_string())
+            .arg("--choice")
+            .arg(choice.to_string())
+            .arg("--options-size")
+            .arg(options_size.to_string())
+            .arg("--key-path")
+            .arg(encrypting_key_path.as_ref());
         self
     }
 
@@ -160,5 +203,12 @@ impl CertificateCommand {
 
     pub fn build(self) -> Command {
         self.command
+    }
+}
+
+fn payload_type_to_string(payload_type: PayloadType) -> &'static str {
+    match payload_type {
+        PayloadType::Public => "public",
+        PayloadType::Private => "private",
     }
 }

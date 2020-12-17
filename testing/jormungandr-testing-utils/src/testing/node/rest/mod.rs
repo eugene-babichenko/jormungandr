@@ -63,6 +63,10 @@ impl JormungandrRest {
         self.inner.enable_logger();
     }
 
+    pub fn inner(&self) -> &legacy::BackwardCompatibleRest {
+        &self.inner
+    }
+
     pub fn raw(&self) -> &RawRest {
         self.inner.raw()
     }
@@ -74,9 +78,10 @@ impl JormungandrRest {
             .replace("http://", "https://")
             .replace("127.0.0.1", "localhost");
 
-        let mut settings: RestSettings = Default::default();
-        settings.certificate = Some(Self::extract_certificate(cert_file.as_ref()));
-
+        let settings = RestSettings {
+            certificate: Some(Self::extract_certificate(cert_file.as_ref())),
+            ..Default::default()
+        };
         Self {
             inner: legacy::BackwardCompatibleRest::new(url, settings),
         }
